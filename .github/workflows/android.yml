@@ -30,9 +30,13 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Extract app folder
+      - name: Extract app folder and correct website URL
         run: |
           unzip -o app.zip -d .
+          JAVA_FILE=$(find app -name MainActivity.java -print -quit)
+          test -n "$JAVA_FILE"
+          sed -i 's#private static final String APP_URL = .*;#private static final String APP_URL = "https://preview-xte9zt.v2.appdeploy.ai/";#' "$JAVA_FILE"
+          grep -n 'APP_URL' "$JAVA_FILE"
 
       - name: Build APK
         run: gradle assembleDebug
